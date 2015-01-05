@@ -1,0 +1,8 @@
+"1.2"
+"this is a\nstring"
+"true"
+"null"
+"[1.2, 1.2]"
+"[this is a\nstring, this is a\nstring]"
+"[1.2, 1.2]"
+"{\"num\":1.2,\"str\":this is a\nstring,\"arr\":[1.2, 1.2]}"
