@@ -1,0 +1,6 @@
+"1.2"
+"this is a\\nstring"
+"true"
+"null"
+Concat (Concat (CharDoc '[') (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (StringDoc "1.2"))))) (CharDoc ']')
+"
