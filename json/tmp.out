@@ -1,6 +1,84 @@
-"1.2"
-"this is a\\nstring"
-"true"
-"null"
-Concat (Concat (CharDoc '[') (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (Concat (Concat (CharDoc ',') (StringDoc "1.2")) (StringDoc "1.2"))))) (CharDoc ']')
-"
+renderNum
+1.2
+renderStr
+"this is a\nstring"
+renderBool
+true
+renderNull
+null
+renderArray
+[1.2,1.2,1.2,1.2]
+["this is a\nstring","this is a\nstring"]
+renderNestedArray
+[["this is a\nstring","this is a\nstring"],["this is a\nstring",
+"this is a\nstring"]]
+[[1.2,1.2,1.2,1.2],[1.2,1.2,1.2,1.2],[1.2,1.2,1.2,1.2],[1.2,1.2,
+1.2,1.2]]
+renderObj
+{"obj":{"num":1.2,"str":"this is a\nstring","arr":[1.2,1.2],
+"nested_array":[["this is a\nstring","this is a\nstring"],[
+"this is a\nstring","this is a\nstring"]],"nested_array":[[1.2,
+1.2,1.2,1.2],[1.2,1.2,1.2,1.2],[1.2,1.2,1.2,1.2],[1.2,1.2,1.2,1.2
+]]},"str":"this is a\nstring"}
+test nestedPretty
+[["this is a\nstring",
+ "this is a\nstring"],[
+                      "this is a\nstring"
+                      ,
+                      "this is a\nstring"
+                      ]]
+{"obj":{"num":1.2,"str":
+       "this is a\nstring",
+       "arr":[1.2,1.2],
+       "nested_array":[[
+                                                    "this is a\nstring"
+                                                    ,
+                                                    "this is a\nstring"
+                                                    ]
+                             ,
+                             [
+                                                          "this is a\nstring"
+                                                          ,
+                                                          "this is a\nstring"
+                                                          ]
+                             ]
+       ,"nested_array":[[1.2,
+                                                      1.2
+                                                      ,
+                                                      1.2
+                                                      ,
+                                                      1.2
+                                                      ]
+                              ,
+                              [
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ]
+                              ,
+                              [
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ]
+                              ,
+                              [
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ,
+                                                            1.2
+                                                            ]
+                              ]
+       },"str":
+"this is a\nstring"}

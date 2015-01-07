@@ -41,12 +41,48 @@ dconcat _ [] = []
 dconcat d [x] = [x]
 dconcat d (x:xs) = x : d : dconcat d xs
 
-prettify :: [Doc] -> Int -> Int -> String -> String
-prettify [] count c ret = ret
-prettify (d:ds) count c ret = case d of 
-                               (Concat x y) -> prettify (x:y:ds) count c ret
-                               other -> if (c + len other < count || c == 0) then prettify ds count (c + len other) (ret ++ flatten other) else prettify (d:ds) count 0 (ret ++ ['\n'])
+--try to add nesting support for exercise
 
+
+prettify :: Doc -> Int -> String
+prettify doc count = helper [doc] 0
+                  where helper [] _ = ""
+                        helper (d:ds) c = case d of 
+                                           (Concat x y) -> helper (x:y:ds) c
+                                           other -> if (c + len other < count || c == 0) 
+                                                      then flatten other ++ (helper ds (c + len other)) 
+                                                      else "\n" ++ (helper (d:ds) 0) 
+
+nestedPretty :: Doc -> String
+nestedPretty d = nestedPrettify d 66
+
+nestedPrettify :: Doc -> Int -> String
+nestedPrettify doc count = helper [doc] 0 []
+                                where helper [] _ _ = "" 
+                                      helper (d:ds) c base = case d of 
+                                                               (Concat x y) -> helper (x:y:ds) c base
+                                                               other  -> if (fits c other base)
+                                                                         then (flatten other) ++ (helper ds (c + len other) (baseNext c other base))
+                                                                         else "\n" ++ (implement base) ++ (helper (d:ds) (currentBase base) base)
+                                      isLeft d = case d of
+                                                   CharDoc '{' -> True
+                                                   CharDoc '[' -> True
+                                                   _ -> False
+                                      isRight d = case d of  
+                                                  CharDoc '}' -> True
+                                                  CharDoc ']' -> True
+                                                  _ -> False
+                                      currentBase base = case base of 
+                                                          [] -> 0
+                                                          (b:bs) -> b
+                                      fits c other base = c + (len other) < count  || c == (currentBase base)
+                                      baseNext c d base = if (isLeft d)
+                                                          then c:base
+                                                          else if (isRight d)
+                                                            then (drop 1 base)
+                                                            else base
+                                      implement [] = []
+                                      implement (n:ns) = replicate n ' '
 len :: Doc -> Int
 len (CharDoc c) = 1
 len (StringDoc s) = length s
@@ -55,8 +91,9 @@ flatten :: Doc -> String
 flatten (CharDoc c) = [c]
 flatten (StringDoc s) = s
 
+
 pretty :: Doc->String
-pretty d = prettify [d] 66 0 ""
+pretty d = prettify d 66
 
 num = NumberValue 1.2
 str = StringValue "this is a\nstring"
@@ -87,3 +124,6 @@ main = do --putStrLn (renderValue num)
           putStrLn (pretty . renderValue $ arr_arr2 )
           putStrLn "renderObj"
           putStrLn (pretty . renderValue $ ( ObjectValue obj_arr) )
+          putStrLn "test nestedPretty"
+          putStrLn (nestedPretty . renderValue $ arr_arr)
+          putStrLn (nestedPretty . renderValue $ ( ObjectValue obj_arr) )
