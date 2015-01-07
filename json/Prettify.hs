@@ -5,10 +5,7 @@ import Data.Char (toLower)
 data Doc = StringDoc String |
            CharDoc Char |
            EmptyDoc |
-           TextDoc String |
-           Line |
-           Concat Doc Doc |
-           Union Doc Doc deriving (Show, Read, Eq)
+           Concat Doc Doc deriving (Show, Read, Eq)
 
 escape_chars = [('\n', "\\n"), ('\b', "\\b"), ('\f', "\\f"), ('\r', "\\r"), ('\t', "\\t"), ('\\',"\\\\")]
 
@@ -25,11 +22,11 @@ renderValue :: Value -> Doc
 renderValue (NumberValue d) = StringDoc $ show d
 renderValue (BoolValue b) = StringDoc $ strToLower $ show b
 renderValue (NullValue) = StringDoc "null"
-renderValue (StringValue a) = StringDoc $ escape a
+renderValue (StringValue a) = StringDoc ('\"' : escape a ++ "\"")
 renderValue (ArrayValue arr) = enclose '[' ']' renderValue arr
 renderValue (ObjectValue EmptyObject) = StringDoc "{}"
 renderValue (ObjectValue (Objects objs)) = enclose '{' '}' processKV objs
-        where processKV (key, value) = StringDoc "\"" <> StringDoc key <> StringDoc "\"" <> CharDoc ':' <> renderValue value
+        where processKV (key, value) = StringDoc ('\"':key ++ "\"") <> CharDoc ':' <> renderValue value
 
 enclose :: Char->Char->(a->Doc)->[a]->Doc
 enclose left right f value = foldr (<>) EmptyDoc (CharDoc left : (dconcat (CharDoc ',') . map f $ value) ++ [CharDoc right])
@@ -59,7 +56,7 @@ flatten (CharDoc c) = [c]
 flatten (StringDoc s) = s
 
 pretty :: Doc->String
-pretty d = prettify [d] 20 0 ""
+pretty d = prettify [d] 66 0 ""
 
 num = NumberValue 1.2
 str = StringValue "this is a\nstring"
@@ -68,16 +65,25 @@ nul = NullValue
 arr = ArrayValue [num, num, num, num]
 str_arr = ArrayValue [str, str]
 arr_arr = ArrayValue [str_arr, str_arr]
-obj = Objects [("num", num), ("str", str), ("arr", ArrayValue [num, num])]
-obj_arr = ArrayValue [ObjectValue obj]
+arr_arr2 = ArrayValue [arr, arr, arr, arr]
+obj = Objects [("num", num), ("str", str), ("arr", ArrayValue [num, num]), ("nested_array", arr_arr), ("nested_array", arr_arr2)]
+obj_arr = Objects [("obj", ObjectValue obj), ("str", str)]
 
 main = do --putStrLn (renderValue num)
+          putStrLn "renderNum"
           putStrLn (pretty . renderValue $ num )
+          putStrLn "renderStr"
           putStrLn (pretty . renderValue $ str )
+          putStrLn "renderBool"
           putStrLn (pretty . renderValue $ bool )
+          putStrLn "renderNull"
           putStrLn (pretty . renderValue $ nul )
           --putStrLn (renderValue arr )
+          putStrLn "renderArray"
           putStrLn (pretty . renderValue $ arr )
-          --putStrLn (renderValue  arr_arr )
-          putStrLn (pretty . renderValue $ arr_arr )
-          putStrLn (pretty . renderValue $ obj_arr )
+          putStrLn (pretty . renderValue $ str_arr )
+          putStrLn "renderNestedArray"
+          putStrLn (pretty . renderValue $  arr_arr )
+          putStrLn (pretty . renderValue $ arr_arr2 )
+          putStrLn "renderObj"
+          putStrLn (pretty . renderValue $ ( ObjectValue obj_arr) )
